@@ -5,9 +5,12 @@ import com.ajcp.ud.exam.service.ExamService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -28,7 +31,10 @@ public class ExamController {
     }
 
     @PostMapping
-    public ResponseEntity<?> register(@RequestBody Exam exam) {
+    public ResponseEntity<?> register(@Valid @RequestBody Exam exam, BindingResult result) {
+        if (result.hasErrors()) {
+            return this.validate(result);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(examService.save(exam));
     }
 
@@ -42,6 +48,25 @@ public class ExamController {
         return examService.delete(id)
                 .map(obj -> ResponseEntity.ok(obj))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/filter/{term}")
+    public ResponseEntity<?> filterByName(@PathVariable String term) {
+        return ResponseEntity.ok(examService.findByName(term));
+    }
+
+    @GetMapping("/subjects")
+    public ResponseEntity<?> listSubject() {
+        return ResponseEntity.ok(examService.findAllSubjects());
+    }
+
+    protected ResponseEntity<?> validate(BindingResult result) {
+        Map<String, Object> errors = new HashMap<>();
+
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), err.getField() + " " + err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }

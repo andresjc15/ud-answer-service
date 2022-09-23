@@ -1,12 +1,10 @@
 package com.ajcp.ud.exam.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +21,19 @@ public class Exam {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String name;
 
     @JsonIgnoreProperties(value = {"exam"}, allowSetters = true)
     @OneToMany(mappedBy = "exam", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Subject subjects;
+
     private boolean isEnabled;
 
-    public Exam(LocalDateTime createAt) {
+    public Exam() {
         this.questions = new ArrayList<>();
     }
 
@@ -52,9 +54,9 @@ public class Exam {
         this.setUpdateAt(LocalDateTime.now());
     }
 
-    public void setQuestions() {
+    public void setQuestions(List<Question> questions) {
         this.questions.clear();
-        this.questions.forEach(this::addQuestion);
+        questions.forEach(this::addQuestion);
     }
 
     public void addQuestion(Question question) {

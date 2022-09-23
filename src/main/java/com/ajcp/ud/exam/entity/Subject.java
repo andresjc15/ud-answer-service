@@ -8,26 +8,33 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "questions")
-public class Question {
+@Table(name = "subjects")
+public class Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    private String text;
+    private String name;
 
-    @JsonIgnoreProperties(value = {"questions"})
+    @JsonIgnoreProperties(value = {"children"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exam_id", nullable = false)
-    private Exam exam;
+    private Subject father;
+
+    @JsonIgnoreProperties(value = {"father"}, allowSetters = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "father", cascade = CascadeType.ALL)
+    private List<Subject> children;
+
+    public Subject() {
+        this.children = new ArrayList<>();
+    }
 
 }

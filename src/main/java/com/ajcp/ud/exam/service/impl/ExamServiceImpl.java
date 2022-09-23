@@ -2,10 +2,13 @@ package com.ajcp.ud.exam.service.impl;
 
 import com.ajcp.ud.exam.entity.Exam;
 import com.ajcp.ud.exam.entity.Question;
+import com.ajcp.ud.exam.entity.Subject;
 import com.ajcp.ud.exam.repository.ExamRepository;
+import com.ajcp.ud.exam.repository.SubjectRepository;
 import com.ajcp.ud.exam.service.ExamService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,8 @@ import java.util.Optional;
 public class ExamServiceImpl implements ExamService {
 
     private final ExamRepository examRepository;
+
+    private final SubjectRepository subjectRepository;
 
     @Override
     public List<Exam> findAll() { return examRepository.findAll(); }
@@ -52,6 +57,18 @@ public class ExamServiceImpl implements ExamService {
             e.setEnabled(false);
             return examRepository.save(e);
         });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Exam> findByName(String term) {
+        return examRepository.findByName(term);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Subject> findAllSubjects() {
+        return subjectRepository.findAll();
     }
 
 }
