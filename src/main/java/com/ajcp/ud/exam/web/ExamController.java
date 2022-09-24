@@ -3,6 +3,7 @@ package com.ajcp.ud.exam.web;
 import com.ajcp.ud.exam.entity.Exam;
 import com.ajcp.ud.exam.service.ExamService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,11 @@ public class ExamController {
     @GetMapping
     public ResponseEntity<?> getExams() {
         return ResponseEntity.ok(examService.findAll());
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<?> getExams(Pageable pageable) {
+        return ResponseEntity.ok(examService.findAll(pageable));
     }
 
     @GetMapping("/{id}")

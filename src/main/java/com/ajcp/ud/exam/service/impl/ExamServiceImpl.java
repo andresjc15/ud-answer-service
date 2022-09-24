@@ -7,6 +7,8 @@ import com.ajcp.ud.exam.repository.ExamRepository;
 import com.ajcp.ud.exam.repository.SubjectRepository;
 import com.ajcp.ud.exam.service.ExamService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,11 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     public List<Exam> findAll() { return examRepository.findAll(); }
+
+    @Override
+    public Page<Exam> findAll(Pageable pageable) {
+        return examRepository.findAll(pageable);
+    }
 
     @Override
     public Optional<Exam> findById(Long id) { return examRepository.findById(id); }
